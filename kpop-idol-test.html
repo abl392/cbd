@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0610" />
+<title>测一测，你更像哪位kpop爱豆？</title>
+<link rel="preconnect" href="https://miaoda.feishu.cn" />
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@600;700;900&display=swap" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  :root{
+    --bg:#08050d;
+    --pink:#ff2e88;
+    --pink-2:#ff7cc0;
+    --cyan:#5ff0ff;
+    --purple:#8b5cff;
+    --ink:#f6f1ff;
+    --dim:#9c93b3;
+    --line:rgba(255,255,255,.12);
+    --glass:rgba(255,255,255,.055);
+    --sans:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",-apple-system,sans-serif;
+    --serif:"Noto Serif SC","Songti SC",Georgia,serif;
+  }
+  html,body{ min-height:100%; }
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  /* 背景光晕 */
+  body::before{
+    content:"";
+    position:fixed; inset:-20%;
+    background:
+      radial-gradient(45% 32% at 18% 8%, rgba(255,46,136,.42), transparent 62%),
+      radial-gradient(38% 30% at 88% 22%, rgba(139,92,255,.38), transparent 64%),
+      radial-gradient(42% 34% at 50% 108%, rgba(95,240,255,.20), transparent 66%),
+      radial-gradient(60% 40% at 0% 82%, rgba(255,46,136,.16), transparent 70%);
+    filter:saturate(1.1);
+    z-index:-2;
+    animation:drift 16s ease-in-out infinite alternate;
+  }
+  body::after{
+    content:"";
+    position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background-image:linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size:44px 44px;
+    mask-image:radial-gradient(circle at 50% 40%, #000 0%, transparent 78%);
+    -webkit-mask-image:radial-gradient(circle at 50% 40%, #000 0%, transparent 78%);
+  }
+  @keyframes drift{
+    from{ transform:translate3d(-1.5%, -1%,0) scale(1.02); }
+    to{ transform:translate3d(1.5%, 1%,0) scale(1.06); }
+  }
+
+  #app{ max-width:470px; margin:0 auto; padding:0 22px; }
+  .view{ display:none; }
+  .view.show{ display:block; }
+
+  /* ===== 视图：首页 ===== */
+  #home{ min-height:100svh; display:none; flex-direction:column; justify-content:center; padding:56px 0 40px; position:relative; }
+  #home.show{ display:flex; }
+  .eyebrow{
+    font-size:11px; letter-spacing:.34em; color:var(--pink-2);
+    text-transform:uppercase; font-weight:700; margin-bottom:18px;
+  }
+  h1.title{
+    font-family:var(--serif);
+    font-weight:900;
+    font-size:clamp(38px, 11vw, 52px);
+    line-height:1.24;
+    letter-spacing:-.5px;
+    background:linear-gradient(96deg, #fff 8%, var(--pink-2) 46%, var(--cyan) 96%);
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent;
+    text-shadow:0 12px 40px rgba(255,46,136,.18);
+  }
+  .sub{
+    margin-top:16px;
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:22px;
+    letter-spacing:.04em;
+    color:#efe7ff;
+    opacity:.92;
+  }
+  .sub::after{
+    content:"";
+    display:block; width:64px; height:2px; margin-top:22px;
+    background:linear-gradient(90deg, var(--pink), transparent);
+  }
+  .home-meta{
+    margin-top:34px; display:flex; gap:16px; flex-wrap:wrap;
+    font-size:12px; color:var(--dim); letter-spacing:.08em;
+  }
+  .home-meta i{
+    font-style:normal; display:inline-flex; align-items:center; gap:6px;
+  }
+  .home-meta i::before{
+    content:""; width:5px; height:5px; border-radius:50%;
+    background:var(--pink); box-shadow:0 0 8px var(--pink);
+  }
+  .cta{
+    margin-top:40px;
+    position:relative;
+    width:100%;
+    border:0;
+    border-radius:999px;
+    padding:19px 24px;
+    font-family:var(--sans);
+    font-size:17px; font-weight:700; letter-spacing:.18em;
+    color:#12040c;
+    background:linear-gradient(100deg, #ffd7ea 0%, #ff87c1 38%, #a97dff 74%, #78f4ff 100%);
+    box-shadow:0 16px 46px rgba(255,46,136,.36), inset 0 1px 0 rgba(255,255,255,.7);
+    cursor:pointer;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .cta:active{ transform:scale(.97); box-shadow:0 10px 26px rgba(255,46,136,.28); }
+  .cta-note{ margin-top:14px; text-align:center; font-size:11px; color:#7c7292; letter-spacing:.1em; }
+  .sticker{
+    position:absolute; right:-6px; top:52px;
+    transform:rotate(9deg);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:8px 12px;
+    font-size:11px; letter-spacing:.12em; color:#cbbfe6;
+    background:rgba(255,255,255,.04);
+    backdrop-filter:blur(8px);
+  }
+
+  /* ===== 视图：答题 ===== */
+  #quiz{ padding:26px 0 48px; min-height:100svh; display:none; flex-direction:column; }
+  #quiz.show{ display:flex; }
+  .qbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .qcount{ font-size:12px; letter-spacing:.16em; color:var(--dim); font-variant-numeric:tabular-nums; }
+  .qcount b{ color:var(--ink); font-size:15px; font-weight:700; }
+  .qbar .logo{
+    font-family:var(--serif); font-weight:900; font-size:12px; letter-spacing:.24em;
+    color:var(--pink-2); opacity:.8;
+  }
+  .progress{
+    margin-top:12px; height:3px; border-radius:99px;
+    background:rgba(255,255,255,.10); overflow:hidden;
+  }
+  .progress span{
+    display:block; height:100%; width:2%;
+    background:linear-gradient(90deg, var(--pink), var(--purple), var(--cyan));
+    box-shadow:0 0 12px rgba(255,46,136,.7);
+    transition:width .35s cubic-bezier(.3,.9,.3,1);
+  }
+  .qwrap{ margin-top:auto; margin-bottom:auto; padding:34px 0 10px; }
+  .qnum{
+    font-family:var(--serif); font-weight:700; font-size:13px; color:var(--pink-2);
+    letter-spacing:.2em; margin-bottom:14px;
+  }
+  .qtext{
+    font-size:clamp(21px, 5.6vw, 25px);
+    font-weight:700; line-height:1.45; letter-spacing:-.2px;
+    text-wrap:balance;
+  }
+  .opts{ margin-top:28px; display:flex; flex-direction:column; gap:11px; }
+  .opt{
+    display:flex; align-items:center; gap:13px;
+    width:100%; text-align:left;
+    padding:16px 16px 16px 14px;
+    border-radius:16px;
+    border:1px solid var(--line);
+    background:var(--glass);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:15px; line-height:1.5;
+    cursor:pointer;
+    backdrop-filter:blur(10px);
+    transition:transform .15s ease, border-color .2s ease, background .2s ease;
+  }
+  .opt .k{
+    flex:none; width:28px; height:28px; border-radius:9px;
+    display:grid; place-items:center;
+    font-size:12px; font-weight:700; letter-spacing:.04em;
+    color:#0d0616;
+    background:linear-gradient(140deg,#ffd9ea,#c4a6ff);
+  }
+  .opt:active{ transform:scale(.985); }
+  .opt:hover{ border-color:rgba(255,46,136,.55); background:rgba(255,46,136,.09); }
+  .qhint{
+    margin-top:26px; font-size:11px; color:#756a8c; letter-spacing:.08em; text-align:center;
+  }
+  .anim-in{ animation:pop .32s cubic-bezier(.2,.8,.3,1) both; }
+  @keyframes pop{
+    from{ opacity:0; transform:translate3d(0,14px,0); }
+    to{ opacity:1; transform:none; }
+  }
+
+  /* ===== 视图：结果 ===== */
+  #result{ padding:40px 0 56px; min-height:100svh; }
+  .res{ display:none; }
+  .res.on{ display:block; animation:pop .45s ease both; }
+  .res-top{ display:flex; align-items:flex-end; justify-content:space-between; gap:10px; }
+  .res-no{
+    font-family:var(--serif); font-size:52px; line-height:.86; font-weight:900;
+    color:transparent; -webkit-text-stroke:1px rgba(255,255,255,.35);
+  }
+  .res-name{
+    font-family:var(--serif); font-weight:900;
+    font-size:clamp(30px,8vw,38px); letter-spacing:-.5px;
+    background:linear-gradient(96deg,#fff,var(--pink-2) 58%,var(--cyan));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .res-line{
+    margin-top:8px; font-family:var(--serif); font-style:italic;
+    font-size:16px; color:#d9cdff; opacity:.9; letter-spacing:.03em;
+  }
+  .res-desc{
+    margin-top:18px; font-size:14px; line-height:1.9; color:#b9b0cf;
+  }
+  .divider{
+    margin:26px 0 22px; height:1px;
+    background:linear-gradient(90deg, rgba(255,46,136,.6), rgba(255,255,255,.06), transparent);
+  }
+  .main-card{
+    position:relative; border-radius:20px; overflow:hidden;
+    aspect-ratio:3/4.1;
+    border:1px solid rgba(255,255,255,.14);
+    box-shadow:0 26px 60px rgba(0,0,0,.55), 0 0 0 1px rgba(255,46,136,.12) inset;
+  }
+  .main-card img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .main-card::after{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, transparent 42%, rgba(6,3,12,.92) 96%);
+  }
+  .main-over{
+    position:absolute; left:18px; right:18px; bottom:16px; z-index:2;
+  }
+  .tag-main{
+    display:inline-block; font-size:10px; letter-spacing:.22em; font-weight:700;
+    padding:5px 9px; border-radius:6px; margin-bottom:9px;
+    background:linear-gradient(100deg,var(--pink),var(--purple));
+    color:#100513;
+  }
+  .main-name{
+    font-family:var(--serif); font-weight:900; font-size:27px; letter-spacing:.02em;
+    color:#fff; text-shadow:0 6px 18px rgba(0,0,0,.6);
+  }
+  .main-name span{
+    font-family:var(--sans); font-size:11px; font-weight:500; letter-spacing:.2em;
+    color:#ffc9e4; margin-left:8px; vertical-align:middle;
+  }
+  .main-bio{
+    margin-top:14px; font-size:13px; line-height:1.85; color:#c0b6d6;
+  }
+  .list-title{
+    margin:30px 0 14px; display:flex; align-items:center; gap:10px;
+    font-size:11px; letter-spacing:.26em; color:var(--pink-2); font-weight:700;
+  }
+  .list-title::after{ content:""; flex:1; height:1px; background:rgba(255,255,255,.1); }
+  .idol-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .idol{
+    border-radius:15px; overflow:hidden;
+    border:1px solid var(--line); background:var(--glass);
+  }
+  .idol img{ width:100%; aspect-ratio:3/4; object-fit:cover; display:block; }
+  .idol-txt{ padding:11px 12px 13px; }
+  .idol-txt b{ font-size:14px; font-weight:700; letter-spacing:.02em; }
+  .idol-txt span{
+    display:block; margin-top:2px; font-size:9px; letter-spacing:.16em; color:#8f84a8;
+  }
+  .idol-txt em{
+    display:block; margin-top:8px; font-style:normal;
+    font-size:11px; line-height:1.7; color:#a89ec2;
+  }
+  .idol.span2{ grid-column:1 / -1; display:flex; align-items:stretch; }
+  .idol.span2 img{ width:38%; aspect-ratio:3/4; }
+  .idol.span2 .idol-txt{ flex:1; display:flex; flex-direction:column; justify-content:center; padding:14px 15px; }
+  .end-note{
+    margin-top:30px; text-align:center; font-size:11px; line-height:1.9;
+    color:#7d7395; letter-spacing:.06em;
+  }
+  .again{
+    margin-top:22px; width:100%; border:1px solid var(--line); border-radius:999px;
+    padding:16px; background:rgba(255,255,255,.05); color:#e8def9;
+    font-family:var(--sans); font-size:14px; letter-spacing:.14em; font-weight:500;
+    cursor:pointer;
+  }
+  .again:active{ transform:scale(.98); }
+  .credit{
+    margin-top:26px; text-align:center; font-size:10px; color:#514763; letter-spacing:.1em;
+  }
+
+  @media (max-width:360px){
+    .idol-grid{ grid-template-columns:1fr; }
+    .opt{ font-size:14px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ===== 视图：首页 ===== -->
+  <section id="home" class="view show">
+    <div class="eyebrow">KPOP PERSONA TEST · 2026</div>
+    <h1 class="title">测一测，<br />你更像哪位kpop爱豆？</h1>
+    <p class="sub">love you 3000</p>
+    <div class="home-meta">
+      <i>48 题</i><i>约 3 分钟</i><i>不限性别</i>
+    </div>
+    <button class="cta" id="startBtn">点击测试</button>
+    <p class="cta-note">凭第一反应选，别选“应该”的那个。</p>
+    <div class="sticker">32 位爱豆 · 8 种人格</div>
+  </section>
+
+  <!-- ===== 视图：答题 ===== -->
+  <section id="quiz" class="view">
+    <div class="qbar">
+      <span class="logo">LOVE YOU 3000</span>
+      <span class="qcount"><b id="curNo">01</b> / 48</span>
+    </div>
+    <div class="progress"><span id="bar"></span></div>
+    <div class="qwrap">
+      <div class="qnum" id="qNum">Q 01</div>
+      <h2 class="qtext" id="qText"></h2>
+      <div class="opts" id="opts"></div>
+    </div>
+    <p class="qhint">选最像你的那个，不是最想成为的那个。</p>
+  </section>
+
+  <!-- ===== 视图：结果 ===== -->
+  <section id="result" class="view">
+
+    <!-- 结果 01 -->
+    <div class="res" id="r0">
+      <div class="res-top">
+        <h2 class="res-name">甜辣系</h2>
+        <div class="res-no">①</div>
+      </div>
+      <p class="res-line">糖衣里包着刀</p>
+      <p class="res-desc">笑起来最没防备，但决定事情时比谁都硬。你身上同时开着两个开关：一个人畜无害，一个不好惹。</p>
+      <div class="divider"></div>
+      <div class="main-card">
+        <img src="assets/wonyoung.jpg" alt="张元英 IVE" />
+        <div class="main-over">
+          <div class="tag-main">主推匹配</div>
+          <div class="main-name">张元英<span>IVE</span></div>
+        </div>
+      </div>
+      <p class="main-bio">甜是底色，锋利是后手；镜头一来就换挡，软一秒冷一秒。</p>
+      <div class="list-title">同型爱豆</div>
+      <div class="idol-grid">
+        <div class="idol"><img src="assets/jennie.jpg" alt="金珍妮" /><div class="idol-txt"><b>金珍妮</b><span>BLACKPINK</span><em>甜辣感的标准答案：眼神先到，动作后到，笑着也能压场。</em></div></div>
+        <div class="idol"><img src="assets/yuna.jpg" alt="申有娜" /><div class="idol-txt"><b>申有娜</b><span>ITZY</span><em>笑起来毫无防备，动作里全是力气，甜和猛不冲突。</em></div></div>
+        <div class="idol"><img src="assets/ningning.jpg" alt="宁艺卓" /><div class="idol-txt"><b>宁艺卓</b><span>aespa</span><em>声音有厚度、笑点也低，能甜能硬，切换不看人脸色。</em></div></div>
+        <div class="idol"><img src="assets/leeseo.jpg" alt="李贤瑞" /><div class="idol-txt"><b>李贤瑞</b><span>IVE</span><em>队内年纪最小，舞台上却稳得不像新人。</em></div></div>
+      </div>
+    </div>
+
+    <!-- 结果 02 -->
+    <div class="res" id="r1">
+      <div class="res-top">
+        <h2 class="res-name">清冷系</h2>
+        <div class="res-no">②</div>
+      </div>
+      <p class="res-line">不开口也有气压</p>
+      <p class="res-desc">你的社交电量低，但不是没情绪，是懒得演。别人热闹时你在看，等所有人说完，你才开口。</p>
+      <div class="divider"></div>
+      <div class="main-card">
+        <img src="assets/winter.jpg" alt="金旼炡 aespa" />
+        <div class="main-over">
+          <div class="tag-main">主推匹配</div>
+          <div class="main-name">金旼炡<span>aespa</span></div>
+        </div>
+      </div>
+      <p class="main-bio">冰感声线，情绪不外露，熟了才把反差萌放出来。</p>
+      <div class="list-title">同型爱豆</div>
+      <div class="idol-grid">
+        <div class="idol"><img src="assets/gaeul.jpg" alt="金秋天" /><div class="idol-txt"><b>金秋天</b><span>IVE</span><em>反应总慢半拍，一跳舞就变成另一个很锐的人。</em></div></div>
+        <div class="idol"><img src="assets/sunghoon.jpg" alt="朴成训" /><div class="idol-txt"><b>朴成训</b><span>ENHYPEN</span><em>前花样滑冰选手，表情管理像一条干净的线，不抖不加戏。</em></div></div>
+        <div class="idol span2"><img src="assets/shuhua.jpg" alt="叶舒华" /><div class="idol-txt"><b>叶舒华</b><span>(G)I-DLE</span><em>说话直接，情绪淡，不解释也不讨好。看着她，你会觉得“不吵”也是一种态度。</em></div></div>
+      </div>
+    </div>
+
+    <!-- 结果 03 -->
+    <div class="res" id="r2">
+      <div class="res-top">
+        <h2 class="res-name">野生系</h2>
+        <div class="res-no">③</div>
+      </div>
+      <p class="res-line">身体先于思考</p>
+      <p class="res-desc">你想事情的方式是“先做，做完再说”。情绪、力气、冲动都在身体里，舞台是你唯一不用解释的地方。</p>
+      <div class="divider"></div>
+      <div class="main-card">
+        <img src="assets/hyuna.jpg" alt="金泫雅" />
+        <div class="main-over">
+          <div class="tag-main">主推匹配</div>
+          <div class="main-name">金泫雅<span>SOLO</span></div>
+        </div>
+      </div>
+      <p class="main-bio">把舞台跳成一种不管不顾的状态，野得坦率，也不装乖。</p>
+      <div class="list-title">同型爱豆</div>
+      <div class="idol-grid">
+        <div class="idol"><img src="assets/lisa.jpg" alt="拉莉莎" /><div class="idol-txt"><b>拉莉莎 Lisa</b><span>BLACKPINK</span><em>身体先说话，力道干净利落，一停一顿都是设计。</em></div></div>
+        <div class="idol"><img src="assets/ryujin.jpg" alt="申留真" /><div class="idol-txt"><b>申留真</b><span>ITZY</span><em>重心低、动作狠，眼神里总有一点不服。</em></div></div>
+        <div class="idol span2"><img src="assets/yeji.jpg" alt="黄礼志" /><div class="idol-txt"><b>黄礼志 Yeji</b><span>ITZY</span><em>猫系眼神加爆发力，安静的狠。不喊，但每一个动作都在说话。</em></div></div>
+      </div>
+    </div>
+
+    <!-- 结果 04 -->
+    <div class="res" id="r3">
+      <div class="res-top">
+        <h2 class="res-name">优雅系</h2>
+        <div class="res-no">④</div>
+      </div>
+      <p class="res-line">所有线条都讲究</p>
+      <p class="res-desc">你不追求“炸”，你要“准”。衣服的垂坠、声音的收放、鞠躬的角度，都是你在意的细节。</p>
+      <div class="divider"></div>
+      <div class="main-card">
+        <img src="assets/rose.jpg" alt="朴彩英 BLACKPINK" />
+        <div class="main-over">
+          <div class="tag-main">主推匹配</div>
+          <div class="main-name">朴彩英<span>BLACKPINK</span></div>
+        </div>
+      </div>
+      <p class="main-bio">声线和线条都细，台上台下都讲质感。</p>
+      <div class="list-title">同型爱豆</div>
+      <div class="idol-grid">
+        <div class="idol"><img src="assets/jisoo.jpg" alt="金智秀" /><div class="idol-txt"><b>金智秀</b><span>BLACKPINK</span><em>古典感的稳，一笑就把距离感化掉。</em></div></div>
+        <div class="idol"><img src="assets/lia.jpg" alt="崔智秀" /><div class="idol-txt"><b>崔智秀 Lia</b><span>ITZY</span><em>嗓音清透，气质像一部老电影。</em></div></div>
+        <div class="idol span2"><img src="assets/liz.jpg" alt="金志垣" /><div class="idol-txt"><b>金志垣 Liz</b><span>IVE</span><em>队内主唱，软声线，认真到有一点笨拙。好看这件事，她从来不急着证明。</em></div></div>
+      </div>
+    </div>
+
+    <!-- 结果 05 -->
+    <div class="res" id="r4">
+      <div class="res-top">
+        <h2 class="res-name">元气系</h2>
+        <div class="res-no">⑤</div>
+      </div>
+      <p class="res-line">一个人就是全场灯光</p>
+      <p class="res-desc">你是那种进门就能把气氛抬起来的人。能量高、直球、不记仇，累的时候也不肯先坐下。</p>
+      <div class="divider"></div>
+      <div class="main-card">
+        <img src="assets/yujin.jpg" alt="安宥真 IVE" />
+        <div class="main-over">
+          <div class="tag-main">主推匹配</div>
+          <div class="main-name">安宥真<span>IVE</span></div>
+        </div>
+      </div>
+      <p class="main-bio">队内队长，能量高到能带动全场，做事又比谁都稳。</p>
+      <div class="list-title">同型爱豆</div>
+      <div class="idol-grid">
+        <div class="idol"><img src="assets/hueningkai.jpg" alt="休宁凯" /><div class="idol-txt"><b>休宁凯</b><span>TXT</span><em>队内忙内，随时能笑出来，情绪写在脸上。</em></div></div>
+        <div class="idol"><img src="assets/taehyun.jpg" alt="姜太显" /><div class="idol-txt"><b>姜太显</b><span>TXT</span><em>脑子快、说话直、体能怪物。</em></div></div>
+        <div class="idol span2"><img src="assets/yuqi.jpg" alt="宋雨琦" /><div class="idol-txt"><b>宋雨琦</b><span>(G)I-DLE</span><em>低音嗓配一张爱笑的脸，说话像开麦，冷场永远从她这儿先破。元气不是吵，是敢先把气氛接过来。</em></div></div>
+      </div>
+    </div>
+
+    <!-- 结果 06 -->
+    <div class="res" id="r5">
+      <div class="res-top">
+        <h2 class="res-name">鬼马系</h2>
+        <div class="res-no">⑥</div>
+      </div>
+      <p class="res-line">正经里藏着离谱</p>
+      <p class="res-desc">你看着乖，一开口全是意外。你用玩笑处理尴尬，也用玩笑处理难过。</p>
+      <div class="divider"></div>
+      <div class="main-card">
+        <img src="assets/beomgyu.jpg" alt="崔范圭 TXT" />
+        <div class="main-over">
+          <div class="tag-main">主推匹配</div>
+          <div class="main-name">崔范圭<span>TXT</span></div>
+        </div>
+      </div>
+      <p class="main-bio">表情包制造机，安静下来反差大得吓人。</p>
+      <div class="list-title">同型爱豆</div>
+      <div class="idol-grid">
+        <div class="idol"><img src="assets/minnie.jpg" alt="米妮" /><div class="idol-txt"><b>米妮 Minnie</b><span>(G)I-DLE</span><em>慵懒声线＋天生的搞怪感，正经里全是离谱。</em></div></div>
+        <div class="idol"><img src="assets/giselle.jpg" alt="内永枝利" /><div class="idol-txt"><b>内永枝利 Giselle</b><span>aespa</span><em>语速快、梗多，rapper的松弛感。</em></div></div>
+        <div class="idol span2"><img src="assets/rei.jpg" alt="直井怜" /><div class="idol-txt"><b>直井怜 Rei</b><span>IVE</span><em>天生综艺感，一本正经地讲怪话，讲完自己先笑。</em></div></div>
+      </div>
+    </div>
+
+    <!-- 结果 07 -->
+    <div class="res" id="r6">
+      <div class="res-top">
+        <h2 class="res-name">拽酷系</h2>
+        <div class="res-no">⑦</div>
+      </div>
+      <p class="res-line">我说话的时候别插嘴</p>
+      <p class="res-desc">你不太需要被喜欢，你需要被听清。决断快、边界清，气场先压住，再讲道理。</p>
+      <div class="divider"></div>
+      <div class="main-card">
+        <img src="assets/karina.jpg" alt="柳智敏 aespa" />
+        <div class="main-over">
+          <div class="tag-main">主推匹配</div>
+          <div class="main-name">柳智敏<span>aespa</span></div>
+        </div>
+      </div>
+      <p class="main-bio">队内队长，AI感的冷脸，一开口就接管全场。</p>
+      <div class="list-title">同型爱豆</div>
+      <div class="idol-grid">
+        <div class="idol"><img src="assets/soyeon.jpg" alt="全昭妍" /><div class="idol-txt"><b>全昭妍 Soyeon</b><span>(G)I-DLE</span><em>自己写歌、自己定风格，气场比音量先到。</em></div></div>
+        <div class="idol"><img src="assets/yeonjun.jpg" alt="崔然竣" /><div class="idol-txt"><b>崔然竣</b><span>TXT</span><em>舞台教科书，最会“抢”的那一个。</em></div></div>
+        <div class="idol span2"><img src="assets/v.jpg" alt="金泰亨" /><div class="idol-txt"><b>金泰亨 V</b><span>BTS</span><em>低音炮＋四次元，冷着脸也能把场子拿走。不需要人多，他一个人在就够。</em></div></div>
+      </div>
+    </div>
+
+    <!-- 结果 08 -->
+    <div class="res" id="r7">
+      <div class="res-top">
+        <h2 class="res-name">温柔系</h2>
+        <div class="res-no">⑧</div>
+      </div>
+      <p class="res-line">先照顾别人，再照顾自己</p>
+      <p class="res-desc">你的强项是“接住”。别人崩了你会先坐下，你自己的情绪永远排在最后一位。</p>
+      <div class="divider"></div>
+      <div class="main-card">
+        <img src="assets/soobin.jpg" alt="崔秀彬 TXT" />
+        <div class="main-over">
+          <div class="tag-main">主推匹配</div>
+          <div class="main-name">崔秀彬<span>TXT</span></div>
+        </div>
+      </div>
+      <p class="main-bio">队内队长，声音软、心思细，习惯先照顾别人。</p>
+      <div class="list-title">同型爱豆</div>
+      <div class="idol-grid">
+        <div class="idol"><img src="assets/chaeryeong.jpg" alt="李彩领" /><div class="idol-txt"><b>李彩领</b><span>ITZY</span><em>笑着跳舞，温柔里带劲，接得住所有人的情绪。</em></div></div>
+        <div class="idol"><img src="assets/miyeon.jpg" alt="曺薇娟" /><div class="idol-txt"><b>曺薇娟</b><span>(G)I-DLE</span><em>队内主唱，气质柔软，说话总留有余地。</em></div></div>
+      </div>
+    </div>
+
+    <p class="end-note">截图发给那个和你抢同一个爱豆的人。<br />你们不一定同一型，但一定会吵起来。</p>
+    <button class="again" id="againBtn">重新测一次</button>
+    <p class="credit">LOVE YOU 3000 · 图片版权归原作者及各所属公司所有</p>
+  </section>
+
+</div>
+
+<script>
+/* ===== 标签 ===== */
+var TAGS = ['甜辣','清冷','野生','优雅','元气','鬼马','拽酷','温柔'];
+
+/* ===== 题库：48 题，每题 4 个选项对应 4 个标签 ===== */
+var Q = [
+ {q:"进练习室，你第一件事是", a:["检查镜子里的表情和发丝","把队形间距量一遍","直接开跳，让身体先热起来","问一句“还有谁没到”"], t:[0,3,2,7]},
+ {q:"待机室最像你的画面", a:["举着手机把全队拍一遍","戴耳机过动线，谁也别吵","现场开始模仿队友","跟工作人员核对流程细节"], t:[4,1,5,6]},
+ {q:"让你挑一首solo曲，你手会伸向", a:["副歌钩子强、能甜一秒炸一秒的","一把嗓子，留白很多","低音贝斯重、能甩头的","一首会想起某个人的老歌"], t:[0,3,2,7]},
+ {q:"直拍被夸“这条能爆”", a:["立刻发到群里让所有人看","“哦，还行吧”，继续看手机","开始模仿自己刚刚的表情","“剪掉重来，我要一条更狠的”"], t:[4,1,5,6]},
+ {q:"演唱会谢幕，你会", a:["找到第一排那个一直举牌的人","站在自己的位置，安静鞠一躬","冲到舞台最边上蹦","确认后台每个人都还好"], t:[0,3,2,7]},
+ {q:"宿舍夜聊，你的角色是", a:["点外卖、放歌、把气氛拉起来","躺在上铺听，偶尔一句戳到点上","学谁说话像谁，全屋笑崩","“两点，必须睡”"], t:[4,1,5,6]},
+ {q:"造型师递来三套衣服，你选", a:["甜色系，但腰线要锋利","黑白灰，线条干净利落","皮衣加链条，能上强度的","宽松软绒，能整个人窝进去"], t:[0,3,2,7]},
+ {q:"被问“你在团队里是什么位置”", a:["“气氛这块归我”","“我不出声，但事情都做完了”","“我是那个变量”","“流程我盯，谁也别掉链子”"], t:[4,1,5,6]},
+ {q:"团队临时改舞蹈，你第一句话", a:["“这版更有味道”","“先把原版跳一遍再改”","“别说了，跳一遍”","“今天几点能收工”"], t:[0,3,2,7]},
+ {q:"上台前十分钟", a:["大声跟所有人击掌","找个角落坐着，不看人","讲个冷笑话把气氛弄松","确认麦、确认站位、确认走位"], t:[4,1,5,6]},
+ {q:"拍MV休息间隙", a:["“导演，这条我想再来一次，能更狠”","看书、发呆，不社交","拿道具开始胡闹","招呼大家吃饭"], t:[0,1,5,7]},
+ {q:"综艺给的任务：现场来一段", a:["“那我跳一段，全场跟我”","“我唱一句，安静的”","“来段即兴，什么都不准备”","“我负责喊口号”"], t:[4,3,2,6]},
+ {q:"签售会遇到一个紧张的粉丝", a:["先夸对方，再逗一句","安静听完，认真看着对方","主动把气氛弄轻松","记住对方的名字，写在便签上"], t:[0,1,4,7]},
+ {q:"被安排站在队形最边上", a:["把边角位跳成最讲究的一条线","那就把边上跳成最炸的位置","顺势做点怪动作","直接问“为什么不是我”"], t:[3,2,5,6]},
+ {q:"摄影师说“再来一个更强的表情”", a:["立刻给出一个又甜又危险的","微微抬眼，什么都不做","笑得没心没肺","端住，一秒都不塌"], t:[0,1,4,6]},
+ {q:"休息日只有一天", a:["去看展、逛书店","去跳舞、打球，把身体榨干","在家玩到凌晨，做点没意义的事","睡到自然醒，然后给朋友做饭"], t:[3,2,5,7]},
+ {q:"你的手机锁屏是", a:["自己最好看的那一张","纯黑，或一张风景","一张表情包","和某人的合照"], t:[0,1,5,7]},
+ {q:"团综玩“最想和谁换一天”", a:["换成最会生活的那个人，过一天有序的日子","换成体能最好的那个，把一天练满","换成最会玩的那个","换成队长，试一天说了算"], t:[3,2,4,6]},
+ {q:"被误解了，你会", a:["笑着把话挑明，一次说清","不解释，做出来给你看","用段子化解","先问对方是不是最近很累"], t:[0,1,5,7]},
+ {q:"打歌服让你自己定", a:["一条垂到底的长裙，走路带风","背心工装，能翻能滚","亮色短上衣，能笑能闹","全黑，肩线要硬"], t:[3,2,4,6]},
+ {q:"你歌单的第一名", a:["甜歌里藏一句狠的","一首钢琴独奏","一首鼓点密集的舞曲","一首很多人合唱的老歌"], t:[0,3,2,7]},
+ {q:"机场被拍到", a:["帽子压低，不看镜头","一路跟粉丝挥手","走着走着开始搞怪","目视前方，步子稳"], t:[1,4,5,6]},
+ {q:"团队里有人情绪崩了，你", a:["坐下来陪着，什么都不问","拉对方出去走到腿软","把该做的事接过来，一件件做完","直接问“要哭还是要骂”"], t:[7,2,3,6]},
+ {q:"你的舞台人设最接近", a:["笑着站中间，下一秒翻脸","表情最少，但眼神一直在","一直在动，停不下来","表情管理随时崩成表情包"], t:[0,1,4,5]},
+ {q:"你最想听到的一句评价", a:["“你有点危险”","“你很有距离感”","“你在台上像野兽”","“你身上有贵气”"], t:[0,1,2,3]},
+ {q:"你最想听到的一句评价（之二）", a:["“你像太阳”","“你太跳脱了”","“你气场有点压人”","“跟你在一起很安心”"], t:[4,5,6,7]},
+ {q:"策划一次团队旅行", a:["每天安排一个惊喜点","行程表精确到分钟","到了再说，走到哪算哪","先问每个人想干嘛"], t:[0,3,2,7]},
+ {q:"群里突然要投票选歌", a:["潜水看完所有意见再表态","全票通过，冲","提议选一首谁都没听过的","把投票规则改了"], t:[1,4,5,6]},
+ {q:"半夜两点，你还在", a:["对着镜子练一个表情","看一部老电影","在客厅放歌乱跳","翻聊天记录，等一个人的回复"], t:[0,1,4,7]},
+ {q:"采访问“用三个字形容自己”", a:["“很讲究”","“不好惹”","“随便吧”","“听我的”"], t:[3,2,5,6]},
+ {q:"舞台事故：音乐放错了", a:["笑着接住，硬转成新版本","停住等正确的前奏，不动","干脆即兴跳完","带头喊节拍，把全队拉回来"], t:[0,1,2,6]},
+ {q:"粉丝做了应援", a:["把应援物按颜色摆好拍一张","现场大喊“谢谢你们”","当场模仿应援手幅上的字","回家写一封长信"], t:[3,4,5,7]},
+ {q:"造型被骂上热搜", a:["回一句“我觉得挺好看”","不回应","自己发个梗图","直接换掉，不解释"], t:[0,1,5,6]},
+ {q:"你的练习顺序", a:["先把每个角度练到对称","先练到喘不上气","边练边放歌边唱","先帮别人看动作"], t:[3,2,4,7]},
+ {q:"收到一份不合心意的礼物", a:["笑着说“我记住了”","收好，不说","当场编个段子","摆在自己桌上"], t:[0,1,5,7]},
+ {q:"舞台结束后台第一件事", a:["把汗擦干净，衣服挂好","直接躺地板","拉着人复盘“刚刚那段”","找PD确认明天的行程"], t:[3,2,4,6]},
+ {q:"你的衣柜主色", a:["粉＋黑","灰＋米","迷彩＋黑","各种软色"], t:[0,3,2,7]},
+ {q:"被问“最近在听什么”", a:["“一首很老的歌”","“全部，都在听”","“一首没人听过的”","“我的下一首”"], t:[1,4,5,6]},
+ {q:"如果给你一个舞台，你想要", a:["一束白光，一个转身，全场安静一秒再炸","一整段没有伴奏的清唱","一整首自己编的舞","一场所有人都能一起唱的歌"], t:[0,1,2,7]},
+ {q:"如果你的故事有一个结尾", a:["站在台上，灯光收干净，鞠躬","还在跳，跳到最后一秒","笑着跑下台，去做点别的","拿起麦说“下一站见”"], t:[3,4,5,6]},
+ {q:"生图被拍到最难看的一帧，全网在传", a:["自己转发，配一句“这帧我认”","完全不看评论，照常营业","再上传一版更生猛的","私信安慰被牵连的队友"], t:[0,1,2,7]},
+ {q:"团综让你选“最想被谁管一天”", a:["选最会玩的，一天都在笑","选最会安排的那个，我少操心","选最不靠谱的，看会出什么事","选我自己"], t:[4,3,5,6]},
+ {q:"你的直拍里最常被截图的瞬间", a:["抬眼看向镜头的那0.5秒","转身时外套划出的那条线","头发甩到糊掉的那一帧","结束后对着镜头轻轻点头"], t:[0,3,2,7]},
+ {q:"一场演出结束后，你最想做", a:["一个人走去便利店","拉全队吃夜宵，越吵越好","复盘自己的失误，然后说“下次玩个大的”","把第二天的时间表排出来"], t:[1,4,5,6]},
+ {q:"被问“你觉得自己最厉害的一点”", a:["我知道怎么让人一眼记住","我几乎不失手","我敢把自己豁出去","我记得每个人的习惯"], t:[0,3,2,7]},
+ {q:"团队要做一首新歌，你想负责", a:["提一个所有人都不吭声的概念","把气氛、口号、舞台互动设计好","编一段谁都没见过的副歌","定方向、分part、盯进度"], t:[1,4,5,6]},
+ {q:"十年后你希望自己是", a:["还在台上，笑一下全场就尖叫","一个从不出错的名字","一个还在跳的人","有人提起你会说“这个人很暖”"], t:[0,3,2,7]},
+ {q:"最后一题：如果只能留下一样", a:["一张没有人打扰的脸","一整个场馆的合唱","一段只有自己懂的怪趣味","一句话就说了算的份量"], t:[1,4,5,6]}
+];
+
+/* ===== 逻辑 ===== */
+var idx = 0;
+var score = [0,0,0,0,0,0,0,0];
+var LETTER = ["A","B","C","D"];
+
+var $ = function(id){ return document.getElementById(id); };
+
+function show(id){
+  var views = document.querySelectorAll(".view");
+  for (var i=0;i<views.length;i++){ views[i].classList.remove("show"); }
+  $(id).classList.add("show");
+}
+
+function renderQ(){
+  var q = Q[idx];
+  $("curNo").textContent = (idx+1) < 10 ? "0" + (idx+1) : (idx+1);
+  $("qNum").textContent = "Q " + ((idx+1) < 10 ? "0" + (idx+1) : (idx+1));
+  $("bar").style.width = (((idx+1) / Q.length) * 100) + "%";
+  var qt = $("qText");
+  qt.textContent = q.q;
+  var wrap = $("opts");
+  wrap.innerHTML = "";
+  for (var i=0;i<4;i++){
+    var b = document.createElement("button");
+    b.className = "opt";
+    b.innerHTML = '<span class="k">' + LETTER[i] + '</span><span>' + q.a[i] + '</span>';
+    b.addEventListener("click", (function(k){
+      return function(){ pick(k); };
+    })(q.t[i]));
+    wrap.appendChild(b);
+  }
+  var anim = document.querySelector(".qwrap");
+  anim.classList.remove("anim-in");
+  void anim.offsetWidth;
+  anim.classList.add("anim-in");
+}
+
+function pick(tagIndex){
+  score[tagIndex] += 1;
+  idx += 1;
+  if (idx >= Q.length){ finish(); return; }
+  renderQ();
+}
+
+function finish(){
+  var best = 0;
+  for (var i=1;i<8;i++){
+    if (score[i] > score[best]) best = i;
+  }
+  $("bar").style.width = "100%";
+  show("result");
+  var list = document.querySelectorAll(".res");
+  for (var j=0;j<list.length;j++){ list[j].classList.remove("on"); }
+  $("r" + best).classList.add("on");
+  window.scrollTo(0,0);
+}
+
+function start(){
+  idx = 0;
+  score = [0,0,0,0,0,0,0,0];
+  show("quiz");
+  renderQ();
+  window.scrollTo(0,0);
+}
+
+$("startBtn").addEventListener("click", start);
+$("againBtn").addEventListener("click", start);
+</script>
+</body>
+</html>
